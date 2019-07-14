@@ -1,9 +1,19 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const authConfig = require('../config/auth')
 
 const User = require('../models/user');
 
 const router = express.Router();
+
+//Função Gerar o token, passando os parametros id, chaveSecreta e expira em 1 dia
+function generateToken(params = {}) {
+    return jwt.sign( params, authConfig.secret, { 
+        expiresIn: 86400,
+    });
+}
 
 //Método registar um usuário
 router.post('/register', async (req, res) => {
@@ -22,7 +32,10 @@ router.post('/register', async (req, res) => {
         //Náo retornar o password informado mesmo criptografado
         user.password = undefined;
 
-        return res.send({ user })
+        return res.send({ 
+            user,
+            token: generateToken( { id: user.id })
+         })
 
     } catch (error) {
         return res.status(400).send( { error: 'Registration failed' } );
@@ -51,7 +64,10 @@ router.post('/authenticate', async (req, res) => {
     user.password = undefined;
 
     //Retornar o usuario localizado
-    res.send( { user });
+    res.send( { 
+        user, 
+        token: generateToken( { id: user.id }) 
+    });
 })
 
 //Recuperar o app passado pelo index.js aplicação principal

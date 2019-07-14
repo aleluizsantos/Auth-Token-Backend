@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //Referenciando o authController repassando para controller o app 
 //que é nossa aplicação
 require('./controllers/authController')(app);
+require('./controllers/projetController')(app);
 
 app.listen(process.env.PORT || 3000, function() {
     console.log('..:: Servidor online::..')
