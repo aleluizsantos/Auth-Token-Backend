@@ -1,3 +1,7 @@
+//--------------------------
+//Fazer a leitura de todos os arquivos que estão dentro diretóiro
+//pegando todas as controller e adicionar na nossa aplicação
+//--------------------------
 const fs = require('fs');
 const path = require('path');
 

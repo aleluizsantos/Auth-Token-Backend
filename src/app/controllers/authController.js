@@ -10,7 +10,7 @@ const User = require('../models/user');
 
 const router = express.Router();
 
-//Função Gerar o token, passando os parametros id, chaveSecreta e expira em 1 dia
+//Função Gerar o token, passando os parametros id, chaveSecreta e expira em 1 dia (86400)
 function generateToken(params = {}) {
     return jwt.sign( params, authConfig.secret, { 
         expiresIn: 86400,
@@ -72,7 +72,8 @@ router.post('/authenticate', async (req, res) => {
     });
 });
 
-//Esqueci minha senha
+//Esqueci minha senha: Envia um e-mail para o usuário com um token 
+//para ele poder acessar e resetar a senha
 router.post('/forgot_password', async (req, res) => {
 
     const { email } = req.body;
@@ -80,7 +81,7 @@ router.post('/forgot_password', async (req, res) => {
     try {
         //Verificar se realmente este email esta cadastrado na base de dados
         const user = await User.findOne( { email } );
-        //Usuario não localizado
+        //Verificação se o Usuario existe
         if(!user)
             return res.status(400).send({ error: 'User not found' });
 
@@ -89,7 +90,7 @@ router.post('/forgot_password', async (req, res) => {
         //Definir a data de expiração para o token, acrescentar uma hora na data atual
         const now = new Date();
         now.setHours(now.getHours() + 1);
-        //Atualizar o banco de dados do usuário com as informações token e expires.
+        //Localizar o usuário e setar o TOKEN e a data de EXPIRIES no banco de dados do usuário
         await User.findOneAndUpdate(user.id, {
             '$set': {
                 passwordResetToken: token,
@@ -106,18 +107,18 @@ router.post('/forgot_password', async (req, res) => {
             //template: 'auth/forgot_password',
             //context: { token },
         }, (err) => {
-            console.log(err);
             if(err)
                 return res.status(400).send({ error: 'Cannot send forgot password email' });
-
+            
             return res.send();
         });
         
     } catch (err) {
+        console.log(err);
         return res.status(400).send({ error: 'Erro on forgot password, try again' });
     }
 });
-
+//Metodo para Resetar a senha: 
 router.post('/reset_password', async (req, res) => {
     const { email, token, password } = req.body;
 
@@ -128,6 +129,7 @@ router.post('/reset_password', async (req, res) => {
         //Usuario não localizado
         if(!user)
             return res.status(400).send({ error: 'User not found' });
+
         //Verificar se o token é igual a do usuario
         if(token !== user.passwordResetToken)
             return res.status(400).send({ error: 'Token invalid' });
@@ -149,6 +151,7 @@ router.post('/reset_password', async (req, res) => {
         return res.status(400).send({ error: 'Erro on Reset password, try again' });
     }
 });
+
 //Recuperar o app passado pelo index.js aplicação principal
 //(app) é o parametro recebido => retornando app.user redefinindo uma ROTA
 module.exports = app => app.use('/auth', router);
