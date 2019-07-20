@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const authConfig = require('../../config/auth.json')
 
 module.exports = (req, res, next) => {
+    //Passado na requisição no Headers authorization o token que foi gerado
+    //Na authenticate da aplicação do authController
     const authHeader = req.headers.authorization;
 
     //Verificar se o token foi informado
@@ -19,13 +21,13 @@ module.exports = (req, res, next) => {
     //Realizar destruturação separando o Bearer e token
     const [scheme, token ] = parts;
 
-    //Verifiar se scheme possui a palavra BEARER
+    //Verifiar se scheme possui a palavra 'BEARER'
     //utilizando rex para fazer a verificação /i para indicar case sensitive
     if(!/^Bearer$/i.test(scheme)) {
         return res.status(401).send( { error: 'token malformed' });
     }
 
-    //Fazer a verificação do token
+    //Fazer a verificação do token usando jwt-(Json Web Token)
     jwt.verify(token, authConfig.secret, (err, decoded) => {
         if(err) return res.status(401).send({ error: 'Token invalid...'});
 
