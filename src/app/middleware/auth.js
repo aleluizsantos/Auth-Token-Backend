@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const authConfig = require('../../config/auth.json')
 
 module.exports = (req, res, next) => {
     //Passado na requisição no Headers authorization o token que foi gerado
@@ -28,7 +27,7 @@ module.exports = (req, res, next) => {
     }
 
     //Fazer a verificação do token usando jwt-(Json Web Token)
-    jwt.verify(token, authConfig.secret, (err, decoded) => {
+    jwt.verify(token, process.env.AUTH_SECRET, (err, decoded) => {
         if(err) return res.status(401).send({ error: 'Token invalid...'});
 
         req.userId = decoded.id;
