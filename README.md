@@ -17,7 +17,7 @@ yarn init -y
 
 * [Mongoose](https://www.mongodb.com/download-center/community) -yarn *download do mongoose*
 
-### Instalação pacote jsonwebtoken para trabalhar com token
+### Instalação pacote (JWK) jsonwebtoken para trabalhar com token
          
          yarn add jsonwebtoken   ou   $ npm install jsonwebtoken
          
