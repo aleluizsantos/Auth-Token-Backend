@@ -8,7 +8,8 @@ const User = require('../models/user');
 
 const router = express.Router();
 
-//Função Gerar o token, passando os parametros id, chaveSecreta e expira em 1 dia (86400)
+//Função Gerar o token, passando os parametros id, chaveSecreta e
+//expira em 1 dia (86400)
 function generateToken(params = {}) {
     return jwt.sign( params, process.env.AUTH_SECRET, { 
         expiresIn: 86400,

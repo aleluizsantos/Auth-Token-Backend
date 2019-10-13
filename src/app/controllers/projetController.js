@@ -6,7 +6,7 @@ const Task = require('../models/task');
 
 const router = express.Router();
 
-//Interceptador - toda requisição que chegar é verificado o token
+//Interceptador - toda requisição que chegar é verificado o token 
 router.use(authMiddleware);
 
 //Listar todos os projetos
